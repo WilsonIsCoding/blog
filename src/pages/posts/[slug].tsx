@@ -1,11 +1,9 @@
 import { format, parseISO } from 'date-fns';
 import type { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import Head from 'next/head';
-// 新增下面這行
 import { useMDXComponent } from 'next-contentlayer/hooks';
 
 import { allPosts, Post } from '@/lib/contentLayerAdapter';
-// import styles from '@/styles/Home.module.css';
 
 export const getStaticPaths: GetStaticPaths = () => {
   const paths = allPosts.map((post) => post.path);
@@ -34,7 +32,6 @@ type Props = {
 };
 
 const PostPage: NextPage<Props> = ({ post }) => {
-  console.log(post);
   const MDXContent = useMDXComponent(post.body.code);
 
   return (
@@ -47,11 +44,12 @@ const PostPage: NextPage<Props> = ({ post }) => {
 
       <main>
         <h1>{post.title}</h1>
+
         <time dateTime={post.date}>
           {format(parseISO(post.date), 'LLLL d, yyyy')}
         </time>
+
         <MDXContent />
-        {/* <div dangerouslySetInnerHTML={{ __html: post.body.html }} /> */}
       </main>
     </div>
   );
