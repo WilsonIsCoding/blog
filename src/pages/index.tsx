@@ -25,10 +25,6 @@ const Home: NextPage<Props> = ({ posts }) => {
       <main className="bg-white p-4 text-black dark:bg-black dark:text-white">
         <h1 className="mb-6 text-4xl font-bold">Welcome to my blog!</h1>
 
-        <div className="my-4">
-          <ThemeSwitch />
-        </div>
-
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {posts.map((post) => (
             <div
