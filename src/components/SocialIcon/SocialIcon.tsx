@@ -38,12 +38,11 @@ const SocialIcon = ({ kind, href }: Props) => {
       rel="noopener noreferrer"
       href={href}
     >
-      <span className="sr-only">{kind}</span>
+      <span className="sr-only bg-black hover:text-primary">{kind}</span>
       <SocialSvg
         className={clsx(
           'size-6 fill-current text-gray-700 transition-colors dark:text-gray-200',
-          kind === 'mail' &&
-            'hover:text-primary-600 dark:hover:text-primary-400',
+          kind === 'mail' && 'hover:text-primary dark:hover:text-primary-400',
           kind === 'github' && 'hover:text-gray-500 dark:hover:text-gray-400',
           kind === 'facebook' &&
             'hover:text-[#4267B2] dark:hover:text-[#4267B2]',
