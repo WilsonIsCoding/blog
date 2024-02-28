@@ -3,10 +3,10 @@ const logoPath = '/logo.png';
 const bannerPath = '/og-image.png';
 
 export const siteConfigs = {
-  title: 'Next.js Tailwind ContentLayer Blog Starter',
+  title: `Wilson's Blog`,
   titleShort: 'Next Blog',
   description:
-    'Blog starter template with modern frontend technologies like Next.js, Tailwind CSS, ContentLayer, i18Next',
+    'Blog starter template with modern frontend technologies like Next.js, Tailwind CSS, Contentlayer, i18Next',
   author: 'Wilson Cheng',
   fqdn: fqdn,
   logoPath: logoPath,

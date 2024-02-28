@@ -41,12 +41,10 @@ export default function App({ Component, pageProps }: AppProps) {
             href: siteConfigs.logoUrl,
           },
         ]}
-      >
-        {' '}
-        <LayoutWrapper>
-          <Component {...pageProps} />
-        </LayoutWrapper>
-      </DefaultSeo>
+      />{' '}
+      <LayoutWrapper>
+        <Component {...pageProps} />
+      </LayoutWrapper>
     </ThemeProvider>
   );
 }

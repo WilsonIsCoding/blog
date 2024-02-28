@@ -1,43 +1,55 @@
 import type { NextPage } from 'next';
-import Head from 'next/head';
+import { GetStaticProps } from 'next';
+import { ArticleJsonLd } from 'next-seo';
 
-import { allPostsNewToOld, Post } from '@/lib/contentLayerAdapter';
+// import PostList, { PostForPostList } from '@/components/PostList';
+import { siteConfigs } from '@/configs/siteConfigs';
+import { allPostsNewToOld } from '@/lib/contentLayerAdapter';
 
-export function getStaticProps() {
-  const posts = allPostsNewToOld;
-  return { props: { posts } };
-}
+// type PostForIndexPage = PostForPostList;
 
 type Props = {
-  posts: Post[];
+  posts: any[];
+};
+
+export const getStaticProps: GetStaticProps<Props> = () => {
+  const posts = allPostsNewToOld.map((post) => ({
+    slug: post.slug,
+    date: post.date,
+    title: post.title,
+    description: post.description,
+    path: post.path,
+  })) as any[];
+  return { props: { posts } };
 };
 
 const Home: NextPage<Props> = ({ posts }) => {
   return (
-    <div>
-      <Head>
-        <title>My blog</title>
-        <meta name="description" content="Welcome to my blog" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <>
+      <ArticleJsonLd
+        type="Blog"
+        url={siteConfigs.fqdn}
+        title={siteConfigs.title}
+        images={[siteConfigs.bannerUrl]}
+        datePublished={siteConfigs.datePublished}
+        authorName={siteConfigs.author}
+        description={siteConfigs.description}
+      />
 
-      <main className="bg-white p-4 text-black dark:bg-black dark:text-white">
-        <h1 className="mb-6 text-4xl font-bold">Welcome to my blog!</h1>
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          {posts.map((post) => (
-            <div
-              key={post.slug}
-              className="rounded-lg border border-black p-6 dark:border-white"
-            >
-              <a href={post.path}>
-                <h2 className="mb-4 text-2xl font-semibold">{post.title}</h2>
-                <p>{post.description}</p>
-              </a>
-            </div>
-          ))}
+      <div className="prose my-12 space-y-2 transition-colors dark:prose-dark md:prose-lg md:space-y-5">
+        <h1 className="text-center sm:text-left">Will.... I am Wilson!</h1>
+        <p>我是 Wilson Cheng，跟那顆排球一樣！</p>
+        <p>喜歡排球、爬山和火鍋</p>
+      </div>
+
+      <div className="my-4 divide-y divide-gray-200 transition-colors dark:divide-gray-700">
+        <div className="prose prose-lg my-8 dark:prose-dark">
+          <h2>最新文章</h2>
         </div>
-      </main>
-    </div>
+
+        {/* <PostList posts={posts} /> */}
+      </div>
+    </>
   );
 };
 
