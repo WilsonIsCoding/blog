@@ -1,4 +1,4 @@
-const fqdn = 'https://nextjs-blog-ashen-nine-78.vercel.app/';
+const fqdn = 'https://nextjs-blog-ashen-nine-78.vercel.app';
 const logoPath = '/logo.png';
 const bannerPath = '/og-image.png';
 

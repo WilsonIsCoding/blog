@@ -17,7 +17,7 @@ const components: { [key: string]: SVGComponent } = {
 };
 
 type Props = {
-  kind: 'mail' | 'github' | 'facebook' | 'linkedin' | 'twitter';
+  kind: 'mail' | 'github' | 'facebook' | 'linkedin';
   href: string;
 };
 
@@ -47,8 +47,7 @@ const SocialIcon = ({ kind, href }: Props) => {
           kind === 'facebook' &&
             'hover:text-[#4267B2] dark:hover:text-[#4267B2]',
           kind === 'linkedin' &&
-            'hover:text-[#0e76a8] dark:hover:text-[#0e76a8]',
-          kind === 'twitter' && 'hover:text-[#1DA1F2] dark:hover:text-[#1DA1F2]'
+            'hover:text-[#0e76a8] dark:hover:text-[#0e76a8]'
         )}
       />
     </a>

@@ -3,7 +3,6 @@ import '@/styles/prism-dracula.css';
 import '@/styles/prism-plus.css';
 
 import type { AppProps } from 'next/app';
-import Head from 'next/head';
 import { DefaultSeo } from 'next-seo';
 import { ThemeProvider } from 'next-themes';
 
@@ -39,7 +38,7 @@ export default function App({ Component, pageProps }: AppProps) {
         additionalLinkTags={[
           {
             rel: 'icon',
-            href: siteConfigs.logoPath,
+            href: siteConfigs.logoUrl,
           },
         ]}
       >
