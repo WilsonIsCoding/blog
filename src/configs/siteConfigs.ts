@@ -13,5 +13,5 @@ export const siteConfigs = {
   logoUrl: fqdn + logoPath,
   bannerPath: bannerPath,
   bannerUrl: fqdn + bannerPath,
-  datePublished: '2022-09-01',
+  datePublished: '2024-02-28',
 };
