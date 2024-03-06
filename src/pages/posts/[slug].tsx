@@ -29,7 +29,9 @@ type Props = {
 };
 
 export const getStaticPaths: GetStaticPaths = () => {
-  const paths = allPosts.map((post) => post.path);
+  const paths = allPosts.map((post) => {
+    return post.path;
+  });
   return {
     paths,
     fallback: false,
@@ -64,7 +66,7 @@ export const getStaticProps: GetStaticProps<Props> = ({ params }) => {
       code: postFull.body.code,
     },
   };
-
+  
   if (!post) {
     return {
       notFound: true,

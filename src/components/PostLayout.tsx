@@ -29,7 +29,7 @@ export default function PostLayout({
   children,
 }: Props) {
   const { date, title } = post;
-
+  
   const { locale } = useRouter();
   return (
     <article>
@@ -55,10 +55,7 @@ export default function PostLayout({
           <PostBody>{children}</PostBody>
         </div>
 
-        <div
-          className="divide-y divide-gray-200 pb-8 transition-colors dark:divide-gray-700"
-          // style={{ gridTemplateRows: 'auto 1fr' }}
-        >
+        <div className="divide-y divide-gray-200 pb-8 transition-colors dark:divide-gray-700">
           <footer>
             <div className="flex flex-col gap-4 pt-4 text-base font-medium sm:flex-row sm:justify-between xl:gap-8 xl:pt-8">
               {prevPost ? (
