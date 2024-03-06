@@ -2,14 +2,14 @@ import type { NextPage } from 'next';
 import { GetStaticProps } from 'next';
 import { ArticleJsonLd } from 'next-seo';
 
-// import PostList, { PostForPostList } from '@/components/PostList';
+import PostList, { PostForPostList } from '@/components/PostList';
 import { siteConfigs } from '@/configs/siteConfigs';
 import { allPostsNewToOld } from '@/lib/contentLayerAdapter';
 
-// type PostForIndexPage = PostForPostList;
+type PostForIndexPage = PostForPostList;
 
 type Props = {
-  posts: any[];
+  posts: PostForIndexPage[];
 };
 
 export const getStaticProps: GetStaticProps<Props> = () => {
@@ -47,7 +47,7 @@ const Home: NextPage<Props> = ({ posts }) => {
           <h2>最新文章</h2>
         </div>
 
-        {/* <PostList posts={posts} /> */}
+        <PostList posts={posts} />
       </div>
     </>
   );
