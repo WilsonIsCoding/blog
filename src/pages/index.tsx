@@ -37,9 +37,9 @@ const Home: NextPage<Props> = ({ posts }) => {
       />
 
       <div className="prose my-12 space-y-2 transition-colors dark:prose-dark md:prose-lg md:space-y-5">
-        <h1 className="text-center sm:text-left">Will.... I am Wilson!</h1>
-        <p>我是 Wilson Cheng，跟那顆排球一樣！</p>
-        <p>喜歡排球、爬山和火鍋</p>
+        <h1 className="text-center sm:text-left">嗨 I'm Wilson</h1>
+        <p>前端初學第二年，喜歡各種新技術</p>
+        <p>喜歡煮飯、跑步和看書！和跟那顆排球一樣！</p>
       </div>
 
       <div className="my-4 divide-y divide-gray-200 transition-colors dark:divide-gray-700">
