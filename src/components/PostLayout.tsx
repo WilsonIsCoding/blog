@@ -29,7 +29,7 @@ export default function PostLayout({
   children,
 }: Props) {
   const { date, title } = post;
-  
+
   const { locale } = useRouter();
   return (
     <article>
