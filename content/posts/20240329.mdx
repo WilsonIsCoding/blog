@@ -46,5 +46,31 @@ socialImage: /images/csp.png
     <li>object-src -> object embed applet </li>
 </p>
 
-<p>而在定義完之後，應該就可以在每一次的request請求中看到</p>
+<h3>
+   CSP白名單種類
+</h3>
+<p><b>
+以下範例為nuxt3的config設定
+</b></p>
+```tsx:App.tsx showLineNumbers {5,15-17}
+
+security: {
+    nonce: false,
+    headers: {
+      referrerPolicy: 'strict-origin-when-cross-origin',
+      crossOriginResourcePolicy: false,
+      crossOriginOpenerPolicy: false,
+      crossOriginEmbedderPolicy: false,
+      contentSecurityPolicy: {
+        'default-src': ["'self'"],
+        'connect-src': [
+          "'self'",
+          process.env.NUXT_ENV_API_URL,]
+        }
+    }
+}
+```
+
+
+<p>而在定義完之後，應該就可以在request請求中看到你的csp設定囉</p>
 ![csp photo unload](/images/csp.png)
