@@ -41,8 +41,10 @@ const Home: NextPage<Props> = ({ posts }) => {
         <p>前端初學第二年，喜歡新奇的東西所以喜歡前端</p>
         <p>
           喜歡煮飯到每個禮拜會去市場採買兩次、喜歡跑步到每年會固定參加半馬馬拉松、喜歡看書到每個禮拜固定看完兩本書！
-          和跟那顆排球一樣！歡迎你到這裡，看看最近的我在學些什麼
         </p>
+        <p>和跟那顆排球一樣！</p>
+
+        <p>歡迎你到這裡，看看最近的我在學些什麼</p>
       </div>
 
       <div className="my-4 divide-y divide-gray-200 transition-colors dark:divide-gray-700">
