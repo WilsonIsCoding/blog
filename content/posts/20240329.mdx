@@ -9,49 +9,39 @@ socialImage: /images/csp.png
 
 ## 起因
 
-<p>
-    這禮拜在公司接到公司網站的CSP調整，由於接下來有一個任務是要試著打AWS Lambda的AP來測試費用消耗跟API Gateway消耗哪個比較大，因此需要在正式機上跑一天Lambda試試看費用計算。
-</p>
-<p>
-    而在過去，公司基本上是每一個API就開一個權限，就好像我們同時開了cdn-protected.leju.com.tw/跟cdn-uploads.leju.com.tw/當作CSP的白名單，但他其實可以統一整理成*leju.com.tw/就可以了。
-</p>
-<p>
-    所以這次的任務就算是初步了解一下CSP白名單的原因跟作法。並把Lambda API的端點加入到我們的CSP白名單中
-</p>
+<p>這禮拜在公司接到公司網站的CSP調整，由於接下來有一個任務是要試著打AWS Lambda的AP來測試費用消耗跟API Gateway消耗哪個比較大，因此需要在正式機上跑一天Lambda試試看費用計算。</p>
 
-<h3>
-    CSP是啥
-</h3>
-<p>
-    CSP的全名是Content Security Policy，簡單來說他是用來保護網站，讓網站知道可以接受哪些資料或是程式碼的注入，比如說像是字形、樣式或是google的爬蟲，這些東西是「不應該」被擋下而應該放行的，那他就應該要被歸類在CSP的白名單中。
-</p>
-<p>
-    但是卻也存在一些駭客，會透過注入程式碼的方式，把一些對網站有害或者是惡意的攻擊加入到你的程式碼中，或者是在你輸入信用卡資訊時，也傳輸了一份資料到駭客手中，在這過程可能你都是在你認為安全的網站下操作，但是因為駭客的惡意注入導致有你意料之外的資料傳輸。
-</p>
+<p>而在過去，公司基本上是每一個API就開一個權限，就好像我們同時開了cdn-protected.leju.com.tw/跟cdn-uploads.leju.com.tw/當作CSP的白名單，但他其實可以統一整理成*leju.com.tw/就可以了。</p>
 
-<h3>
-   CSP白名單種類
-</h3>
-<p>
-   在定義白名單時，也會需要一併定義允許的資料內容的種類，
-</p>
-<p>
-    <li>default-src -> 預設值,以下種類未設定時會採用default-src的設定值(這個一定要設定以避免遺漏,至少要設定成'none'或'self')</li>
-    <li>img-src -> img src="..." </li>
-    <li>media-src -> video audio source track </li>
-    <li>style-src -> link rel="stylesheet" href="style.css" </li>
-    <li>script-src -> script </li>
-    <li>font-src -> @font-face </li>
-    <li>frame-src -> iframe </li>
-    <li>object-src -> object embed applet </li>
-</p>
+<p>所以這次的任務就算是初步了解一下CSP白名單的原因跟作法。並把Lambda API的端點加入到我們的CSP白名單中</p>
+
+<h3>CSP是啥</h3>
+
+<p>CSP的全名是Content Security Policy，簡單來說他是用來保護網站，讓網站知道可以接受哪些資料或是程式碼的注入，比如說像是字形、樣式或是google的爬蟲，這些東西是「不應該」被擋下而應該放行的，那他就應該要被歸類在CSP的白名單中。</p>
+
+<p>但是卻也存在一些駭客，會透過注入程式碼的方式，把一些對網站有害或者是惡意的攻擊加入到你的程式碼中，或者是在你輸入信用卡資訊時，也傳輸了一份資料到駭客手中，在這過程可能你都是在你認為安全的網站下操作，但是因為駭客的惡意注入導致有你意料之外的資料傳輸。</p>
+
+<h3>CSP白名單種類</h3>
+
+<p>在定義白名單時，也會需要一併定義允許的資料內容的種類，</p>
+
+<ul>
+<li>default-src -> 預設值,以下種類未設定時會採用default-src的設定值(這個一定要設定以避免遺漏,至少要設定成'none'或'self')</li>
+<li>img-src -> img src="..." </li>
+<li>media-src -> video audio source track </li>
+<li>style-src -> link rel="stylesheet" href="style.css" </li>
+<li>script-src -> script </li>
+<li>font-src -> @font-face </li>
+<li>frame-src -> iframe </li>
+<li>object-src -> object embed applet </li>
+</ul>
 
 <h3>
    CSP白名單種類
 </h3>
-<p><b>
-以下範例為nuxt3的config設定
-</b></p>
+
+<p>以下範例為nuxt3的config設定</p>
+
 ```tsx:App.tsx showLineNumbers {5,15-17}
 
 security: {
@@ -71,6 +61,6 @@ security: {
 }
 ```
 
-
 <p>而在定義完之後，應該就可以在request請求中看到你的csp設定囉</p>
+
 ![csp photo unload](/images/csp.png)
