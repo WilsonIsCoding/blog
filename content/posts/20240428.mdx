@@ -1,0 +1,13 @@
+---
+title: CSP後續與解決方法
+description: CSP 動態引入
+slug: csp-dymically-import
+date: 2024-04-28
+type: Post
+---
+
+## 起因
+
+<p>延續上次的任務後，John(咱們的CTO)發現一個問題，當我們透過cloudFlare的後台給我們的方式去新增CSP限制時，會因為規則過長導致沒辦法吃進去(超荒謬的)，塞不下導致有部分的規則並沒有被吃進去，所以後來經過討論決定要用dymically import的方式來解決這個問題</p>
+
+<p>問題確認：4/29確定動態引入的解決目的，是在解決專案script引入過多的問題，而不是白名單過長的問題</p>
