@@ -10,4 +10,56 @@ type: Post
 
 <p>延續上次的任務後，John(咱們的CTO)發現一個問題，當我們透過cloudFlare的後台給我們的方式去新增CSP限制時，會因為規則過長導致沒辦法吃進去(超荒謬的)，塞不下導致有部分的規則並沒有被吃進去，所以後來經過討論決定要用dymically import的方式來解決這個問題</p>
 
-<p>問題確認：4/29確定動態引入的解決目的，是在解決專案script引入過多的問題，而不是白名單過長的問題</p>
+<p>CSP的動態引入的文章可以參考Huli大大的這篇文章</p>
+
+[CSP的動態引入的文章](https://ithelp.ithome.com.tw/articles/10315612?sc=rss.iron)
+
+<h3>範例說明：</h3>
+
+```tsx:App.tsx
+  'script-src': [
+    //self代表允許相同網域名字的網站的請求
+          "'self'",
+          'https://cdn.jsdelivr.net/npm/@splidejs/splide@2.4.21/',
+          'https://cdn.jsdelivr.net/npm/dom-to-image@2.6.0/',
+          'https://*.googletagmanager.com',
+          'https://www.google-analytics.com',
+        ],
+```
+<p>
+那接著我們要透過動態引入的方式去修改nuxt.config的檔案 使上述的這些白名單透過js檔案的方式引入專案。
+</p>
+
+<p>我們可以開一個檔案並撰寫以下程式碼</p>
+<p>內容主要是透過js的原生寫法將script白名單直接導入，並透過script tag動態導入到網站裡</p>
+
+```tsx:App.tsx
+const scriptSrcs = [
+  'https://cdn.jsdelivr.net/npm/@splidejs/splide@2.4.21/dist/js/splide.min.js',
+  'https://cdn.jsdelivr.net/npm/dom-to-image@2.6.0/dist/dom-to-image.min.js',
+  'https://js.tappaysdk.com/sdk/tpdirect/v5.17.0',
+];
+
+export function generateScripts() {
+  scriptSrcs.forEach((src) => {
+    const script = document.createElement('script');
+    script.src = src;
+
+    document.head.appendChild(script);
+  });
+}
+```
+
+<p>而最後 就在app.vue檔案裡面去把這段程式碼引入就可以正常運作了</p>
+
+```tsx:App.tsx
+<script setup>
+import { generateScripts } from '@/helpers/strictDynamicUtils';
+onMounted(() => {
+  generateScripts();
+});
+</script>
+```
+
+<h3>Conclusion</h3>
+<p>當初在研究這段的時候覺得動態引入就是CSP的救星，任何所有的資源都可以透過動態引入的方式，所以歡天喜地的自認為公司那一大包東西有一大部分都可以用動態方式解決，但研究後發現只有script可以，但是公司大部分的資源都是S3圖片、google gtm之類的資源，但這些資源就只能透過cloudFare去寫或是nuxt的設置，所以雖然總長度是有縮短的，但是明顯對於像外部圖片引入需求大的專案就比較不適合了。</p>

@@ -17,7 +17,7 @@ socialImage: /images/csp.png
 
 <h3>CSP是啥</h3>
 
-<p>CSP的全名是Content Security Policy，簡單來說他是用來保護網站，讓網站知道可以接受哪些資料或是程式碼的注入，比如說像是字形、樣式或是google的爬蟲，這些東西是「不應該」被擋下而應該放行的，那他就應該要被歸類在CSP的白名單中。</p>
+<p>CSP的全名是Content Security Policy，簡單來說他是用來保護網站，讓網站知道可以接受哪些來源的資料或是程式碼的注入，比如說像是字形、樣式或是google的爬蟲，這些東西是「不應該」被擋下而應該放行的，那他就應該要被歸類在CSP的白名單中。</p>
 
 <p>但是卻也存在一些駭客，會透過注入程式碼的方式，把一些對網站有害或者是惡意的攻擊加入到你的程式碼中，或者是在你輸入信用卡資訊時，也傳輸了一份資料到駭客手中，在這過程可能你都是在你認為安全的網站下操作，但是因為駭客的惡意注入導致有你意料之外的資料傳輸。</p>
 
@@ -42,8 +42,7 @@ socialImage: /images/csp.png
 
 <p>以下範例為nuxt3的config設定</p>
 
-```tsx:App.tsx showLineNumbers {5,15-17}
-
+```tsx:App.tsx
 security: {
     nonce: false,
     headers: {
@@ -61,6 +60,6 @@ security: {
 }
 ```
 
-<p>而在定義完之後，應該就可以在request請求中看到你的csp設定囉</p>
+<p>而在定義完之後，應該就可以在request請求中看到你的csp設定</p>
 
 ![csp photo unload](/images/csp.png)
