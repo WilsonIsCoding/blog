@@ -12,3 +12,19 @@ type: Post
 
 
 ##程式碼
+```tsx:App.tsx
+const bannerData = ref(null);
+// MAIN_BANNER_CONFIG是一個Object[]，每一個陣列就是一個廣告資料
+bannerData.value = getRandomData(MAIN_BANNER_CONFIG);
+```
+
+<p>按照這樣的方式理論上就能從banner裡面隨機拿到一個值並賦值給bannerData，但實際上卻會出現畫面有兩個不同廣告案的同時閃爍，花了一段時間才發現，會出現這個問題的原因</p>
+<p>而且神奇的事，這種錯誤也不是每次都會發生，大概每個廣告案出來時，會有50%的機率出錯，所以當初在看到這個問題超級困惑，但後來研究了一下才發現原來是...</p>
+
+<h2>Server跟Client所隨機到的廣告案不同</h2>
+<p>首先我們知道 SSR跟CSR的區別，是在於伺服器回傳的HTML跟JS是否已經是「預先展開解析過的」，來幫助瀏覽器去爬蟲或是使用者能有更好的效率提升FID，這篇沒有要提到太多SEO的東西，但是這邊卻講到一個重要的內容，那就是nuxt在解析程式碼時 會分成server bundler 跟 client builder，而就以功能面來講，Client只要好好的等著Server端解析完「抽籤」完回傳client應該要顯示的廣告就好，之後再負責使用者任意的操作與改動作出響應式就行。</p>
+<p>且 很明顯的 我這段跑隨機的func，是分別在server跟client隨機到不同的廣告案不同所造成的畫面跳針</p>
+<p>而要解決這個問題也很容易 只要我們「選邊站」就好，如果這個廣告 是需要經過內網api，經過驗證等等才可以拿到的 那就走server side，但如果這個廣告不用那麼嚴謹，沒有要特別加入的seo的tag，或是不想要把首頁整個大量的人流的計算loading(因為還要看cookie去配廣告)都卡在server這邊，那我覺得就可以直接做在客戶端這邊就好。</p>
+
+<p>Nuxt SSR的相關文章</p>
+[解密Vue SSR](https://kknews.cc/code/oe3yppq.html)
