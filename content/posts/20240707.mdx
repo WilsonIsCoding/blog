@@ -1,0 +1,14 @@
+---
+title: nuxt3 CICD模索
+description: 樂居nuxt3 CICD建置過程分享
+slug: nuxt3-CICD-build
+date: 2024-07-07
+type: Post
+---
+
+## 起因
+大概從今年年初開始，我就超級想要碰自動部署這件事，非常想要能夠在原有的開發流程上做一段自動部署的程式，在某一次1 on 1的面談中，跟咱們組長提了這個需求後，批准了 就開始準備這件事情，把這件事情的研究、執行的過程記錄下來。
+
+## 大綱
+在開始之前，需要先盤點一下樂居目前使用的技術跟我們需要了解的事情，首先 我們使用的是自架x64主機，並把image存放在AWS的ECR(沒有用到ECS)，所以他的流程應該會是這樣
+我們會先需要做eslint驗證，確定程式碼的coding style，接著透過AWS IAM 的身份驗證跟創立，拿取短期credentials的權限，並在github action上進行打包，並把image上傳到AWS ECR上，最後再執行機器內部的deploy，因為安全性問題，我們需要透過github self-hosted runner來觸發部署腳本。
