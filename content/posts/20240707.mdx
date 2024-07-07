@@ -9,6 +9,147 @@ type: Post
 ## 起因
 大概從今年年初開始，我就超級想要碰自動部署這件事，非常想要能夠在原有的開發流程上做一段自動部署的程式，在某一次1 on 1的面談中，跟咱們組長提了這個需求後，批准了 就開始準備這件事情，把這件事情的研究、執行的過程記錄下來。
 
-## 大綱
+## 執行大綱
 在開始之前，需要先盤點一下樂居目前使用的技術跟我們需要了解的事情，首先 我們使用的是自架x64主機，並把image存放在AWS的ECR(沒有用到ECS)，所以他的流程應該會是這樣
 我們會先需要做eslint驗證，確定程式碼的coding style，接著透過AWS IAM 的身份驗證跟創立，拿取短期credentials的權限，並在github action上進行打包，並把image上傳到AWS ECR上，最後再執行機器內部的deploy，因為安全性問題，我們需要透過github self-hosted runner來觸發部署腳本。
+
+## 執行背景
+在最開始時，我們需要先知道我們所需的權限跟需要做的事情在其他的專案上執行的差異，還好，除了現有的專案外，我還有另外兩個專案可以參考，加上看了莫立全的
+[文章](https://kknews.cc/code/oe3yppq.html)之後就開始來慢慢做這件事，花了比較多時間研究的反而是AWS的雲端服務，之前碰過的東西只有做一頁式網站時碰過的S3，
+所以這次在碰的時候花了大部分時間在看的是[IAM Token](https://docs.aws.amazon.com/zh_tw/IAM/latest/UserGuide/id_credentials_access-keys.html)的權限設定還有[github action](https://docs.github.com/zh/actions)的介紹。
+
+## 先上程式碼
+```sh:App.sh
+// 這次部署的工作項目
+name: build-and-deploy-in-nuxt3-development
+run-name: ${{ github.event_name }} by @${{ github.actor }} 
+
+// 觸發時機，可以用push merge等等來設定這個action的觸發時間
+on:  
+  push:
+    branches:
+      - develop
+
+// 這邊的permission是因為我們晚點要透過OpenID Connect（簡稱 OIDC）進行驗證，拿取短期的金鑰驗證來做這次的action
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read # This is required for actions/checkout
+
+// 一些環境變數的設定
+env:
+  AWS_ECR_REPO: www-nuxt3
+  IMAGE_NAME: www-nuxt3
+  IMAGE_TAG: develop
+  NODE_VERSION: 20
+  PNPM_VERSION: latest-8
+  BASE_IMAGE: gcr.io/distroless/nodejs18-debian12:latest
+
+jobs:
+// 這個工作批次的名字，可用need: [check]來做工作批次的順序
+  check:
+    name: ESLint and Prettier check
+    runs-on: ubuntu-latest
+
+    steps:
+    // 允許這次的action來抓取我們repo的程式碼 並依照下面的程序來進行
+      - name: Clone repository
+        uses: actions/checkout@v4
+
+
+    // 裡面是透過我外部的另外一個job來拿取指定的pnpm跟node版本
+      - name: Setup Node and Pnpm with cache
+        uses: ./.github/actions/setup-and-cache
+        id: setup-and-cache
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          pnpm-version: ${{ env.PNPM_VERSION }}
+    //  安裝依賴項
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+    //  裡面是透過我外部的另外一個job來驗證這次push的程式碼是否有符合eslint規定
+      - name: ESLint check
+        run: pnpm lint || true
+
+  build:
+    // 跑在ubuntu的主機上
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        name: Clone repository
+
+      - name: Setup Node and Pnpm with cache
+        uses: ./.github/actions/setup-and-cache
+        id: setup-and-cache
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          pnpm-version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        
+        // 允許action能夠讀取同一個organization外部repo
+      - name: add dev env
+        uses: actions/checkout@v4
+        with: 
+          token: ${{ secrets.REPO_READ_TOKEN }}
+          repository: lejutech/develop_env
+          sparse-checkout: |
+            www-nuxt3/.env
+          sparse-checkout-cone-mode: false
+          path: './develop_env'
+        // 把外部的develop_env repo中的www-nuxt3資料夾中的 .env複製過來
+      - run: mv develop_env/www-nuxt3/.env .
+        //build檔案
+      - name: Build
+        run: pnpm build
+        //將剛剛build的檔案與image包成container
+      - name: Build container image
+        id: build
+        run: |
+          CONTAINER_ID=$(buildah from docker.io/arm64v8/node:18.19.0-alpine)
+          buildah copy ${CONTAINER_ID} .output /app
+          buildah config -e NODE_ENV=development -e HOST=0.0.0.0 ${CONTAINER_ID}
+          buildah config --cmd '["node", "/app/server/index.mjs"]' ${CONTAINER_ID}
+          IMAGE_ID=$(buildah commit ${CONTAINER_ID})
+          echo "IMAGE_ID=${IMAGE_ID}" >> $GITHUB_OUTPUT
+  
+
+        //這邊需要拿從AWS上註冊的Provider，並新增權限後所拿取到的token ID，拿取到的短期token
+      - name: Configure AWS credentials
+        id: aws-creds
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+        //登入ECR並確保可以具備推送權限
+      - name: Login to ECR using Buildah
+        run: |
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | buildah login --username AWS --password-stdin ${{ secrets.AWS_ECR_URL }}
+        //把剛剛的container推送上ECS
+      - name: Upload Image
+        run: |
+          buildah push --rm ${{ steps.build.outputs.IMAGE_ID }} docker://${{ secrets.AWS_ECR_URL }}/${{ env.AWS_ECR_REPO }}:${{ env.IMAGE_TAG }}
+  
+
+  Deploy_to_develop_www-nuxt_from_ecr:
+    needs: [ build ]
+    //這邊需要連線自架主機，建立連線後才可以透過github action 的self-host runner觸發機器內部的腳本
+    runs-on: [self-hosted, dev-www-nuxt3-docker-site, ARM64]
+    steps:
+      - name: Deploy shell script
+        run: |
+          echo "www-nuxt3 開始部署"
+          //觸發部署腳本
+          sudo AWS_ECR_URL=${{ secrets.AWS_ECR_URL }} /home/ec2-user/scripts/apps/www-nuxt3_9007_9008/deploy_from_ecr.sh
+          echo "www-nuxt3 完成部署"
+```
+
+## 執行心得
+這次執行算是我在樂居做過目前最有趣的一件事情，一方面對虛擬機的運作還有AWS的服務有更多的認識外，算是解決了團隊中部署費時又費力的問題，尤其現在上線DL在即，團隊每天卻至少花費4次的部署時間在確定東西有沒有正確部署，所以這次的的執行真的是幫了團隊的大忙。
+也算是自發性提的一個需求 最後自己幫團隊省了一段 每天都會花不少時間確定的流程 心裡還是蠻有成就感的！
+
+<h3>閱讀連結</h3>
+[IAM 使用者](https://docs.aws.amazon.com/zh_tw/IAM/latest/UserGuide/id_credentials_access-keys.html)
+[實作開源小工具，與 Github Actions 的第一次相遇！](https://medium.com/starbugs/%E5%AF%A6%E4%BD%9C%E9%96%8B%E6%BA%90%E5%B0%8F%E5%B7%A5%E5%85%B7-%E8%88%87-github-actions-%E7%9A%84%E7%AC%AC%E4%B8%80%E6%AC%A1%E7%9B%B8%E9%81%87-3dd2d70eeb)
+[深入淺出 OpenID Connect (一)](https://shuninjapan.medium.com/%E6%B7%B1%E5%85%A5%E6%B7%BA%E5%87%BA-openid-connect-%E4%B8%80-8701bbf00958)
