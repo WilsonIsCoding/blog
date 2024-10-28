@@ -1,0 +1,17 @@
+---
+title: 2024工作
+description: 關於JWT與sessionToken的深入理解
+slug: JWT-sessionToken
+date: 2024-10-28
+type: Post
+---
+
+<p>轉眼間，也在樂居呆了10個月的時間，跑過兩個完整的專案，三合一專案和賣屋報告，其中摸到的技術包含S3、unit test、CI/CD、SSR、CSR、JWT、sessionToken，還有許多零零總總的東西，雖然說這些東西在網路上都能找到，但還是覺得自己親手實作過，才能夠比較知道這些東西的運作原理，以及在實際應用上的差異。</p>
+
+<h2>三合一專案</h2>
+<p>會叫做三合一專案的原因，是因為他是將原本樂居在Laravel專案的實價地圖、買房地圖跟賣屋地圖，透過nuxt3重新實作，並且將他們整合在一起</p>
+<p>在系統規劃上，除了真正做到完整的前後分離，也把API的邏輯整理更統一跟乾淨，也依照舊版本的一些feed back，在介面的強調跟操作上做了調整，讓使用者可以更容易上手。</p>
+<p>在seo上，則加入完整的site map、canonical、sitemap、並在部分權重高的頁面做SSR跟meta head跟description的客製化，曾經在某個版本還有做到高達99分的評分xDD。(但因為後來有些操作需要調整，導致FPS下降)</p>
+<p>團隊協作上，我也寫了我第一隻CI/CD的pipeline，透過github action去觸發github runners，檢測stylelint、eslint、並將結果回饋到github，讓團隊可以更快速的知道哪些地方有問題</p>
+<p>而在資安弱點上，我們透過ECS的弱點掃描，去掃描我們的container，並依據結果去調整我們的Dockerfile和node套件，讓我們的container可以更安全，只能說，有大概一個月的時間，我都在跟修復專案的資安風險等級...</p>
+<p>最後，因為順序的關係，我們先做了nightwatch的e2e測試，用來保護最重要的畫面跟功能，也確實有幾次在使用者反饋之前，警報有先響xD。而更為基礎的unit test，則是等到專案穩定後，才開始進行。</p>
