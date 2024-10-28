@@ -1,0 +1,22 @@
+---
+title: 深入JWT與sessionToken
+description: 關於JWT與sessionToken的深入理解
+slug: JWT-sessionToken
+date: 2024-10-28
+type: Post
+---
+
+## 大綱
+<p>之前對於JWT驗證的認知僅止於前端會拿到後端所給予的token，並依照需求存在cookie或localstorage，但對於JWT的運作原理以及sessionToken的運作原理一直沒有很深入的了解，這次剛好跟後端聊了一下，才比較知道這兩者在產生方式、驗證方式上的差異跟優缺。</p>
+
+## 產生方式
+<p>JWT的產生方式是透過header、payload、signature三個部分，header跟payload是base64UrlEncode，signature是透過header跟payload跟secretKey去HMACSHA256，最後再將三者用"."串接起來。所以，後端是可以將簡單的資料存在payload中，而signature則是將header跟payload的資料做加密，最後這三串字串拼再一起，就會是JWT。</p>
+<p>sessionToken的產生方式是透過sessionID跟使用者資料去Hash，而sessionID會存在cookie中，使用者資料會存在server的session中。對於前端來說，我們只會拿到一個ID，但是對於這個ID能拿到什麼資料，我們是無法得知的。</p>
+
+## 運作原理
+<p>JWT的運作原理是透過前端在每次請求時，把token帶在header上，後端在收到請求時，會透過secretKey去驗證token的正確性，但是比較特別的是JWT具有無狀態的特性，所以今天只要請求夾帶的token正確，後端不會去驗證token的正確性，而是直接認證成功。不需要像sessionToken一樣，每次請求都要回server去驗證sessionID是否有效。這對於附載量大的服務來說，可以減少server的負擔。</p>
+<p>sessionToken的運作原理是透過前端在每次請求時，把token帶在header上，後端在收到請求時，會透過server的sessionID去驗證token的正確性</p>
+
+## 驗證方式
+<p>JWT的驗證方式是透過前端在每次請求時，把token帶在header上，後端在收到請求時，會透過secretKey去加密header跟payload，並將它拿去跟signature做比對，若完全比對成功，則認證成功，如果失敗，則代表中間可能有被竄改過，而導致認證失敗。</p>
+<p>sessionToken的驗證方式是透過前端在每次請求時，把token帶在header上，後端在收到請求時，會透過sessionID去驗證token的正確性，如果正確，則認證成功，如果失敗，則認證失敗。</p>
