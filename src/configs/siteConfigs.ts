@@ -5,8 +5,7 @@ const bannerPath = '/og-image.png';
 export const siteConfigs = {
   title: `Wilson's Blog`,
   titleShort: 'Next Blog',
-  description:
-    'Blog starter template with modern frontend technologies like Next.js, Tailwind CSS, Contentlayer, i18Next',
+  description: '威爾森的技術筆記',
   author: 'Wilson Cheng',
   fqdn: fqdn,
   logoPath: logoPath,
