@@ -14,9 +14,7 @@ type: Post
 ## 解題思路
 <p>1.我們需要先做出一個最小堆的class，並使用dynamic programing的方式來逐漸丟 和 取最小的值來慢慢增加result。</p>
 <p>2.可以想得一個方向是，result的第一個值，會是nums1和nums2的最小值的組合，因為最小堆的根節點是最小值，所以result的第一個值會是nums1和nums2的最小值的組合。</p>
-<p>3.接著，我們需要將result的第二個值，會是nums1和nums2的第二個最小值的組合，一定會是nums1[0]和nums2[1]或是nums1[1]和nums2[0]的組合，我們需要比較這兩個值，並將較小的值加入result。所以換個方向想，
-    我們可以先把第一個數字(也就是nums1[0]跟nums2[0])丟進去，因為他一定存在result的回傳，並把同一排的index先固定，因為他有可能從頭到尾都參與在result的計算裡面，For example：nums[i]跟nums[0]，剩下的就用for回圈一個一個慢慢丟跟取值，直到取到符合條件的數量K。
-</p>
+<p>3.接著，我們需要將result的第二個值，會是nums1和nums2的第二個最小值的組合，一定會是nums1[0]和nums2[1]或是nums1[1]和nums2[0]的組合，我們需要比較這兩個值，並將較小的值加入result。所以換個方向想，我們可以先把第一個數字(也就是nums1[0]跟nums2[0])丟進去，因為他一定存在result的回傳，並把同一排的index先固定，因為他有可能從頭到尾都參與在result的計算裡面，For example：nums[i]跟nums[0]，剩下的就用for回圈一個一個慢慢丟跟取值，直到取到符合條件的數量K。</p>
 
 
 
