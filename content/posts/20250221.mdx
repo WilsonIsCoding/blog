@@ -6,13 +6,121 @@ date: 2025-02-21
 type: Post
 ---
 # 題目說明
-<p>最小堆定義：一個根節點
-</p>
+<p>給定兩個數字陣列nums1和nums2，以及一個整數k，請返回兩個數字陣列中前k個最小值的組合。</p>
+<p>nums1 = [1,7,11], nums2 = [2,4,6], k = 3</p>
+<p>回傳：[[1,2],[1,4],[1,6]]</p>
 
 # 解題思路
+<p>1.我們需要先做出一個最小堆的class，並使用dynamic programing的方式來逐漸丟 和 取最小的值來慢慢增加result。</p>
+<p>2.可以想得一個方向是，result的第一個值，會是nums1和nums2的最小值的組合，因為最小堆的根節點是最小值，所以result的第一個值會是nums1和nums2的最小值的組合。</p>
+<p>3.接著，我們需要將result的第二個值，會是nums1和nums2的第二個最小值的組合，一定會是nums1[0]和nums2[1]或是nums1[1]和nums2[0]的組合，我們需要比較這兩個值，並將較小的值加入result。所以換個方向想，
+    我們可以先把第一個數字(也就是nums1[0]跟nums2[0])丟進去，因為他一定存在result的回傳，並把同一排的index先固定，因為他有可能從頭到尾都參與在result的計算裡面，For example：nums[i]跟nums[0]，剩下的就用for回圈一個一個慢慢丟跟取值，直到取到符合條件的數量K。
+</p>
+
+
 
 # 最小堆概念
+<p>最小堆定義：一個根節點會是最小值，且每個節點的值都會大於或等於其父節點的值。</p>
+<p>最小堆的性質：</p>
+<ul>
+    <li>最小堆的根節點是最小值</li>
+    <li>最小堆的每個節點都會大於或等於其父節點的值</li>
+    <li>最小堆的每個節點都會大於或等於其父節點的值</li>
+</ul>
 
 # 實作
+<p>他需要包含一個push跟pop的方法，以及一個size的方法，以及一個_bubbleUp跟_bubbleDown的方法。</p>
+## 函式說明
+<p>push：將值加入堆中</p>
+<p>pop：將最小值移除</p>
+<p>size：回傳堆的大小</p>
+<p>_bubbleUp：因為在我們將值加入堆中時，他有可能不會是最大的值，會影響到我們最小堆的正確性，因此我們需要將值向上移動，直到找到它的正確位置</p>
+<p>_bubbleDown：通常的發生時機會在加入了一個比根節點還要更「大」的值，導致堆的結構被破壞，因此我們需要將根節點拿掉，並把這個新的值放進來，但他是有可能比原本的根節點的子節點還要更大的，所以這個類別需要具備向下移動的功能，用以確保堆的正確性。</p>
+
+```javascript
+class MinHeap {
+    constructor() {
+        this.heap = [];
+    }
+
+    push(val) {
+        this.heap.push(val);
+        this._bubbleUp();
+    }
+
+    pop() {
+        if (this.size() === 1) return this.heap.pop();
+        const min = this.heap[0];
+        this.heap[0] = this.heap.pop();
+        this._bubbleDown();
+        return min;
+    }
+
+    size() {
+        return this.heap.length;
+    }
+
+    _bubbleUp() {
+        let idx = this.heap.length - 1;
+        while (idx > 0) {
+            let parentIdx = Math.floor((idx - 1) / 2);
+            if (this.heap[idx][0] >= this.heap[parentIdx][0]) break;
+            [this.heap[idx], this.heap[parentIdx]] = [this.heap[parentIdx], this.heap[idx]];
+            idx = parentIdx;
+        }
+    }
+
+    _bubbleDown() {
+        let idx = 0;
+        const length = this.heap.length;
+        while (true) {
+            let leftIdx = 2 * idx + 1;
+            let rightIdx = 2 * idx + 2;
+            let smallest = idx;
+
+            if (leftIdx < length && this.heap[leftIdx][0] < this.heap[smallest][0]) {
+                smallest = leftIdx;
+            }
+            if (rightIdx < length && this.heap[rightIdx][0] <p this.heap[smallest][0]) {
+                smallest = rightIdx;
+            }
+            if (smallest === idx) break;
+
+            [this.heap[idx], this.heap[smallest]] = [this.heap[smallest], this.heap[idx]];
+            idx = smallest;
+        }
+    }
+}
+```
+2.實作題目
+<p>最後，創建一個我們剛剛建立的類別，並依序把nums1根num2[0]的值先丟進去去做樹的建立。</p>
+<p>然後再跑一個回圈，是把剛剛的根節點拿出來，並把他的子節點丟進去，直到k個。因為nums1和nums2是遞增排列的，所以到K個之後，剩下的也就不用比對了，因為一定會更大。</p>
+```javascript
+var kSmallestPairs = function(nums1, nums2, k) {
+    if (!nums1.length || !nums2.length) return [];
+    
+    let minHeap = new MinHeap();
+    let result = [];
+
+    // 先將 (nums1[i], nums2[0]) 放入堆
+    for (let i = 0; i < Math.min(k, nums1.length); i++) {
+        minHeap.push([nums1[i] + nums2[0], i, 0]);  // [sum, i, j]
+    }
+
+    while (k > 0 && minHeap.size()) {
+        let [sum, i, j] = minHeap.pop();
+        result.push([nums1[i], nums2[j]]);
+
+        if (j + 1 < nums2.length) {
+            minHeap.push([nums1[i] + nums2[j + 1], i, j + 1]);
+        }
+        k--;
+    }
+    
+    return result;
+}
+```
 
 # 複雜度說明
+<p>時間複雜度：O(k log n)，其中n是nums1和nums2的長度。</p>
+<p>空間複雜度：O(n)，其中n是nums1和nums2的長度。</p>
