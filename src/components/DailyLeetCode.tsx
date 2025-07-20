@@ -16,7 +16,7 @@ export default function DailyLeetCode({
   const targetQuestionList = questionList.filter((question) =>
     question.tags?.includes('leetCode')
   );
-  if (targetQuestionList) {
+  if (targetQuestionList.length === 0) {
     return (
       <div className="p-4 border rounded shadow max-w-xl mx-auto mt-8">
         <h2 className="text-xl font-bold mb-2">📌 Leetcode 每日一題</h2>
