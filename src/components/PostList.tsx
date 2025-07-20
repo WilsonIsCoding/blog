@@ -9,6 +9,9 @@ export interface PostForPostList {
   title: string;
   description: string;
   path: string;
+  tags: string[];
+  url: string;
+  difficulty: string;
 }
 
 type Props = {

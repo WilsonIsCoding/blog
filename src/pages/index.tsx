@@ -3,6 +3,7 @@ import { GetStaticProps } from 'next';
 import { ArticleJsonLd } from 'next-seo';
 
 import PostList, { PostForPostList } from '@/components/PostList';
+import DailyLeetCode from '@/components/DailyLeetCode';
 import { siteConfigs } from '@/configs/siteConfigs';
 import { allPostsNewToOld } from '@/lib/contentLayerAdapter';
 
@@ -19,7 +20,10 @@ export const getStaticProps: GetStaticProps<Props> = () => {
     title: post.title,
     description: post.description,
     path: post.path,
-  })) as any[];
+    tags: post.tags || [],
+    url: post.url || '',
+    difficulty: post.difficulty || '',
+  }));
   return { props: { posts } };
 };
 
@@ -35,6 +39,8 @@ const Home: NextPage<Props> = ({ posts }) => {
         authorName={siteConfigs.author}
         description={siteConfigs.description}
       />
+
+      <DailyLeetCode questionList={posts} />
 
       <div className="prose my-12 space-y-2 transition-colors dark:prose-dark md:prose-lg md:space-y-5">
         <h1 className="text-center sm:text-left">嗨 I'm Wilson</h1>

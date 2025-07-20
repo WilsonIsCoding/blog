@@ -26,6 +26,19 @@ export const Post = defineDocumentType(() => ({
     socialImage: {
       type: 'string',
     },
+    tags: {
+      type: 'list',
+      of: { type: 'string' },
+      required: false,
+    },
+    url: {
+      type: 'string',
+      required: false,
+    },
+    difficulty: {
+      type: 'string',
+      required: false,
+    },
   },
   computedFields: {
     path: {

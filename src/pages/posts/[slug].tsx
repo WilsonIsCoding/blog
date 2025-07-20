@@ -66,7 +66,7 @@ export const getStaticProps: GetStaticProps<Props> = ({ params }) => {
       code: postFull.body.code,
     },
   };
-  
+
   if (!post) {
     return {
       notFound: true,
