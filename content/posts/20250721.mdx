@@ -1,0 +1,33 @@
+---
+title: LeetCode 1957 Delete Characters to Make Fancy String
+description: delete-characters-to-make-fancy-string
+slug: delete-characters-to-make-fancy-string
+date: 2025-07-21
+type: Post
+tags: [leetCode]
+url: https://leetcode.com/problems/delete-characters-to-make-fancy-string/description/
+difficulty: easy
+---
+
+## 題解
+
+```javascript
+/**
+ * @param {string} s
+ * @return {string}
+ */
+var makeFancyString = function (s) {
+    if (s.length < 3) return s;
+    let stack = [s[0], s[1]]
+    for (let i = 2; i < s.length; i++) {
+        if (stack[stack.length - 2] === stack[stack.length - 1] && stack[stack.length - 1] === s[i]) {
+            continue
+        } else {
+            stack.push(s[i])
+        }
+    }
+    return stack.join('')
+};
+```
+空間複雜度：O(n)
+時間複雜度：O(n)
