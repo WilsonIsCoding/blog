@@ -1,0 +1,40 @@
+---
+title: LeetCode 2722. Join Two Arrays by ID
+description: 2722. Join Two Arrays by ID
+slug: 2722. Join Two Arrays by ID
+date: 2025-08-03
+type: Post
+tags: [leetCode]
+url: https://leetcode.com/problems/join-two-arrays-by-id/description/
+difficulty: medium
+---
+
+## 題解
+```javascript
+/**
+ * @param {Array} arr1
+ * @param {Array} arr2
+ * @return {Array}
+ */
+var join = function (arr1, arr2) {
+    let map = new Map()
+    for (let i = 0; i < arr1.length; i++) {
+        map.set(arr1[i]["id"], arr1[i])
+    }
+    for (let i = 0; i < arr2.length; i++) {
+        let originData = null;
+        if (map.has(arr2[i]["id"])) {
+            originData = { ...map.get(arr2[i]["id"]), ...arr2[i] };
+        }
+        map.set(arr2[i]["id"], originData || arr2[i])
+    }
+    let res = []
+    for (var value of map.values()) {
+        res.push(value);
+    }
+    return res.sort((a, b) => a["id"] - b["id"]);
+};
+
+```
+空間複雜度：O(n+m)
+時間複雜度：O(n+m)
