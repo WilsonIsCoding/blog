@@ -1,0 +1,34 @@
+---
+title: LeetCode 2722. Join Two Arrays by ID
+description: 2722. Join Two Arrays by ID
+slug: 2722. Join Two Arrays by ID
+date: 2025-08-04
+type: Post
+tags: [leetCode]
+url: https://leetcode.com/problems/join-two-arrays-by-id/description/
+difficulty: easy
+---
+
+## 題解
+```javascript
+/**
+ * @param {number[]} fruits
+ * @param {number[]} baskets
+ * @return {number}
+ */
+var numOfUnplacedFruits = function (fruits, baskets) {
+  let count = 0;
+  for (let i = 0; i < fruits.length; i++) {
+    for (let j = 0; j < baskets.length; j++) {
+      if (fruits[i] <= baskets[j]) {
+        baskets[j] = -1;
+        count++;
+        break;
+      }
+    }
+  }
+  return fruits.length - count;
+};
+```
+空間複雜度：O(1)
+時間複雜度：O(n*m)
