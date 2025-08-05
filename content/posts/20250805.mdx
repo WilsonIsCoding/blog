@@ -1,0 +1,39 @@
+---
+title: LeetCode 2401. Longest Nice Subarray
+description: 2401. Longest Nice Subarray
+slug: 2401. Longest Nice Subarray
+date: 2025-08-05
+type: Post
+tags: [leetCode]
+url: https://leetcode.com/problems/longest-nice-subarray/description/
+difficulty: medium
+---
+
+## 題解
+```javascript
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var longestNiceSubarray = function (nums) {
+    let mask = 0;
+    let maxCount = 0;
+    let left = 0;
+    let right = 0;
+    while (right < nums.length) {
+        if ((mask & nums[right]) === 0) {
+            mask |= nums[right]
+            right++
+        } else {
+            while ((mask & nums[right]) != 0) {
+                mask ^= nums[left]
+                left++
+            }
+        }
+        maxCount = Math.max(maxCount, right - left)
+    }
+    return maxCount
+};
+```
+空間複雜度：O(1)
+時間複雜度：O(n)
