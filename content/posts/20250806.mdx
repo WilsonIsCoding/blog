@@ -1,0 +1,32 @@
+---
+title: LeetCode 322. Coin Change
+description: 322. Coin Change
+slug: 322. Coin Change
+date: 2025-08-06
+type: Post
+tags: [leetCode]
+url: https://leetcode.com/problems/coin-change/
+difficulty: medium
+---
+
+## 題解
+```javascript
+/**
+ * @param {number[]} coins
+ * @param {number} amount
+ * @return {number}
+ */
+var coinChange = function (coins, amount) {
+  let maxAmount = amount + 1;
+  let dp = new Array(maxAmount).fill(maxAmount);
+  dp[0] = 0;
+  for (const coin of coins) {
+    for (let i = coin; i < maxAmount; i++) {
+      dp[i] = Math.min(dp[i], dp[i - coin] + 1);
+    }
+  }
+  return dp[amount] === maxAmount ? -1 : dp[amount];
+};
+```
+時間複雜度：O(coins.length+amount.length)
+空間複雜度：O(Array.length)
