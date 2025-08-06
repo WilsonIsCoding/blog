@@ -28,5 +28,5 @@ var coinChange = function (coins, amount) {
   return dp[amount] === maxAmount ? -1 : dp[amount];
 };
 ```
-時間複雜度：O(coins.length+amount.length)
+時間複雜度：O(coins.length * amount.length)
 空間複雜度：O(Array.length)
