@@ -1,0 +1,40 @@
+---
+title: LeetCode 2224. Minimum Number of Operations to Convert Time
+description: 2224. Minimum Number of Operations to Convert Time
+slug: 2224. Minimum Number of Operations to Convert Time
+date: 2025-08-07
+type: Post
+tags: [leetCode]
+url: https://leetcode.com/problems/minimum-number-of-operations-to-convert-time/description/
+difficulty: east
+---
+
+## 題解
+```javascript
+/**
+ * @param {string} current
+ * @param {string} correct
+ * @return {number}
+ */
+var convertTime = function (current, correct) {
+    let currentHour = Number(current.split(":")[0]);
+    let currentMinuate = Number(current.split(":")[1]);
+    let correctHour = Number(correct.split(":")[0]);
+    let correctMinuate = Number(correct.split(":")[1]);
+    let totalMinuate = (correctHour - currentHour) * 60 + correctMinuate - currentMinuate
+    const minuateType = [1, 5, 15, 60];
+    let count = 0;
+    for (let i = minuateType.length - 1; i >= 0; i--) {
+        if (totalMinuate === 0) {
+            break
+        }
+        if (totalMinuate >= minuateType[i]) {
+            count += Math.floor(totalMinuate / minuateType[i]);
+            totalMinuate = totalMinuate % minuateType[i];
+        }
+    }
+    return count;
+};
+```
+時間複雜度：O(5)
+空間複雜度：O(6)
