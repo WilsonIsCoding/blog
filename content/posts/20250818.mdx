@@ -1,0 +1,39 @@
+---
+title: LeetCode 2149. Rearrange Array Elements by Sign
+description: 2149. Rearrange Array Elements by Sign
+slug: 2149. Rearrange Array Elements by Sign
+date: 2025-08-17
+type: Post
+tags: [leetCode]
+url: https://leetcode.com/problems/rearrange-array-elements-by-sign/description/
+difficulty: medium
+---
+## 題解
+
+```javascript
+/**
+ * @param {number[]} nums
+ * @return {number[]}
+ */
+var rearrangeArray = function (nums) {
+    let positive = nums.filter((num) => num > 0)
+    let negative = nums.filter((num) => num < 0)
+    let result = [];
+    let maxLength = Math.max(positive.length, negative.length);
+    for (let i = 0; i < maxLength; i++) {
+        if (i > positive.length) {
+            result.push(negative[i])
+            continue;
+        }
+        if (i > negative.length) {
+            result.push(positive[i])
+            continue;
+        }
+        result.push(positive[i], negative[i])
+    }
+    return result;
+};
+```
+
+時間複雜度：O(2n)
+空間複雜度：O(2n)
