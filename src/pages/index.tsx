@@ -44,11 +44,13 @@ const Home: NextPage<Props> = ({ posts }) => {
 
       <div className="prose my-12 space-y-2 transition-colors dark:prose-dark md:prose-lg md:space-y-5">
         <h1 className="text-center sm:text-left">嗨 I'm Wilson</h1>
-        <p>前端初學第二年，喜歡新奇的東西所以喜歡前端</p>
         <p>
-          喜歡煮飯到每個禮拜會去市場採買兩次、喜歡跑步到每年會固定參加半馬馬拉松、喜歡看書到每個禮拜固定看完兩本書！
+          雜食性工程師，擁有三年的前端開發經驗，兩年的工作經驗，在今年轉成後端工程師。
         </p>
-        <p>和跟那顆排球一樣！</p>
+
+        <p>把複雜流程簡單化，喜歡弄髒雙手來解決問題。</p>
+
+        <p>因為喜歡分享，所以選擇企管系。因為喜歡技術，所以當了工程師。</p>
 
         <p>歡迎你到這裡，看看最近的我在學些什麼</p>
       </div>
