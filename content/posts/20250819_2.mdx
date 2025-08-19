@@ -1,0 +1,38 @@
+---
+title: LeetCode 139. Word Break
+description: 139. Word Break
+slug: 139. Word Break
+date: 2025-08-19
+type: Post
+tags: [leetCode]
+url: https://leetcode.com/problems/word-break/description/
+difficulty: medium
+---
+## 題解
+
+```javascript
+/**
+ * @param {string} s
+ * @param {string[]} wordDict
+ * @return {boolean}
+ */
+var wordBreak = function (s, wordDict) {
+    let set = new Set();
+    let wordSet = new Set(wordDict);
+    let dp = [0];
+    while (dp.length > 0) {
+        let start = dp.shift();
+        if (start === s.length) return true;
+        for (let end = start + 1; end <= s.length; end++) {
+            if (wordSet.has(s.substring(start, end))) {
+                if (set.has(end)) continue;
+                dp.push(end);
+                set.add(end);
+            }
+        }
+    }
+    return false
+};
+```
+時間複雜度：O(n)
+空間複雜度：O(n)
