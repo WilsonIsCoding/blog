@@ -1,0 +1,44 @@
+---
+title: LeetCode 2348. Number of Zero-Filled Subarrays
+description: 2348. Number of Zero-Filled Subarrays
+slug: 2348. Number of Zero-Filled Subarrays
+date: 2025-08-19
+type: Post
+tags: [leetCode]
+url: https://leetcode.com/problems/number-of-zero-filled-subarrays/description/
+difficulty: medium
+---
+## 題解
+
+```javascript
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var zeroFilledSubarray = function (nums) {
+    let right = 0;
+    let left = 0;
+    let zeroArray = [];
+    let result = 0;
+    while (right < nums.length) {
+        if (
+            (nums[right] === 0 && nums[right + 1] !== 0) ||
+            (right === nums.length - 1 && nums[right] === 0)
+        ) {
+            while (nums[left] !== 0 || nums[left - 1] === 0) {
+                left++;
+            }
+            zeroArray.push(right - left + 1);
+            left = right + 1;
+        }
+        right++;
+    }
+    for (let i = 0; i < zeroArray.length; i++) {
+        result += (zeroArray[i] * (zeroArray[i] + 1)) / 2;
+    }
+    return result;
+};
+```
+
+時間複雜度：O(n)
+空間複雜度：O(n/2)
