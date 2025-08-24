@@ -1,0 +1,41 @@
+---
+title: LeetCode 1004. Max Consecutive Ones III
+description: 1004. Max Consecutive Ones III
+slug: 1004. Max Consecutive Ones III
+date: 2025-08-24
+type: Post
+tags: [leetCode]
+url: https://leetcode.com/problems/max-consecutive-ones-iii/
+difficulty: medium
+---
+## 題解
+
+```javascript
+/**
+ * @param {number[]} nums
+ * @param {number} k
+ * @return {number}
+ */
+var longestOnes = function (nums, k) {
+    let left = 0;
+    let right = 0;
+    let result = 0;
+    let zeroNum = 0;
+    while (right < nums.length) {
+        if (nums[right] === 0) {
+            zeroNum++
+        }
+        while (zeroNum > k) {
+            if (nums[left] === 0) {
+                zeroNum--
+            }
+            left++
+        }
+        result = Math.max(result, right - left + 1)
+        right++
+    }
+    return result
+};
+```
+時間複雜度：O(n)
+空間複雜度：O(4)
