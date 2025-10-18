@@ -40,8 +40,6 @@ const Home: NextPage<Props> = ({ posts }) => {
         description={siteConfigs.description}
       />
 
-      <DailyLeetCode questionList={posts} />
-
       <div className="prose my-12 space-y-2 transition-colors dark:prose-dark md:prose-lg md:space-y-5">
         <h1 className="text-center sm:text-left">嗨 I'm Wilson</h1>
         <p>
