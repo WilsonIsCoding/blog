@@ -74,7 +74,7 @@ export function createStore<
   enhancer?: StoreEnhancer<Ext, StateExt>
 ): Store<S, A, UnknownIfNonSpecific<StateExt>> & Ext {
 /// 很多很多的錯誤防呆程式碼...
-//currentReducer在這邊是代指初始被創立的reducer，也就是一開始你所給予的initialValue跟dispatch的type
+// currentReducer在這邊是代指初始被創立的reducer，也就是一開始你所給予的initialValue跟dispatch的type
 
   let currentReducer = reducer
   
