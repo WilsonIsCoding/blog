@@ -43,7 +43,7 @@ const Home: NextPage<Props> = ({ posts }) => {
       <div className="prose my-12 space-y-2 transition-colors dark:prose-dark md:prose-lg md:space-y-5">
         <h1 className="text-center sm:text-left">嗨 I'm Wilson</h1>
         <p>
-          雜食性工程師，擁有三年的前端開發經驗，兩年的工作經驗，在今年轉成後端工程師。
+          雜食性工程師，擁有三年的前端開發經驗，兩年的工作經驗。
         </p>
 
         <p>把複雜流程簡單化，喜歡弄髒雙手來解決問題。</p>
