@@ -6,148 +6,31 @@ date: 2024-07-07
 type: Post
 ---
 
-## 起因
-大概從今年年初開始，我就超級想要碰自動部署這件事，非常想要能夠在原有的開發流程上做一段自動部署的程式，在某一次1 on 1的面談中，跟咱們組長提了這個需求後，批准了 就開始準備這件事情，把這件事情的研究、執行的過程記錄下來。
+## CI/CD
+當我們常常在求職網站上看到CI/CD這個名詞時，他由兩個名詞所組成 Continuous Integration/Continuous Delivery(或Deployment)，中文翻譯成持續整合/持續交付(或部署)，簡單來說就是把我們平常開發程式碼的流程自動化，讓我們在每次push程式碼到遠端倉庫時，可以自動幫我們做測試、打包、部署等工作，減少人為操作的錯誤率，提高開發效率。
+而當過工程師才更確定一件事情，那就是應該盡可能地減少重複工作，把時間花在更有價值的事情上，而CI/CD正是幫助我們達成這個目標的利器。
+他能夠幫我們檢查程式碼的品質、確保程式碼能夠順利運行，並且自動化部署到伺服器上，讓我們能夠更專注於開發新的功能，而不是花時間在部署上。
+甚至當錯誤發生時，CI/CD系統也能夠幫我們快速定位問題，並且回滾到之前的版本，減少對使用者的影響。
 
-## 執行大綱
-在開始之前，需要先盤點一下樂居目前使用的技術跟我們需要了解的事情，首先 我們使用的是自架x64主機，並把image存放在AWS的ECR(沒有用到ECS)，所以他的流程應該會是這樣
-我們會先需要做eslint驗證，確定程式碼的coding style，接著透過AWS IAM 的身份驗證跟創立，拿取短期credentials的權限，並在github action上進行打包，並把image上傳到AWS ECR上，最後再執行機器內部的deploy，因為安全性問題，我們需要透過github self-hosted runner來觸發部署腳本。
+但其實CICD並不是指某種特定的技術，更多的時候指的是自動化的這個概念，而能夠做到這件事情的工具也非常多，大部分還是看企業內部所使用的部署平台來決定使用哪一種工具，常見的有
+像是Jenkins、GitLab CI/CD、GitHub Actions、CircleCI等等。
+## GitHub Actions
+因為我們公司所使用的平台是github，所以這次也理所當然的使用他所服務的GitHub Actions來做這次的CICD建置，他能夠讓我們在每次push程式碼到遠端倉庫時，自動幫我們執行一系列的工作流程，像是測試、打包、部署等等。
 
-## 執行背景
-在最開始時，我們需要先知道我們所需的權限跟需要做的事情在其他的專案上執行的差異，還好，除了現有的專案外，我還有另外兩個專案可以參考，加上看了莫立全的
-[文章](https://kknews.cc/code/oe3yppq.html)之後就開始來慢慢做這件事，花了比較多時間研究的反而是AWS的雲端服務，之前碰過的東西只有做一頁式網站時碰過的S3，
-所以這次在碰的時候花了大部分時間在看的是[IAM Token](https://docs.aws.amazon.com/zh_tw/IAM/latest/UserGuide/id_credentials_access-keys.html)的權限設定還有[github action](https://docs.github.com/zh/actions)的介紹。
+## 流程確定
+在實際進行開發前，通堂會跟內部確定一下我們產品在實際部署到用戶端之前 我們應該要做好哪一些的檢查跟部署工作，這當中可以包含測試、程式碼風格檢查、打包、壓縮、部署等等，確定好這些工作後，才能夠開始進行實際的開發工作。
 
-## 先上程式碼
-```sh:App.sh
-// 這次部署的工作項目
-name: build-and-deploy-in-nuxt3-development
-run-name: ${{ github.event_name }} by @${{ github.actor }} 
+## 簡單說明一下我們這次的CICD流程
+1.部署前會先打包成一個容器，並先執行單元測試，確保新程式碼能夠順利運行，沒有因為這次新的功能弄壞舊的功能。
+2.進行打包，這邊因為我們是使用aws的ECS服務，所以會把打包好的容器上傳到aws的ECR服務中，方便後續的部署。
+3.部署到aws的ECS服務中，這邊會使用aws的CLI工具來進行部署，確保新的容器能夠順利運行在ECS服務中。
+4.最後，我們也有撰寫在機器裡面的腳本，會確定機器與容器的port號碼是正確的，並且是回傳200正常回應的。
+5.切換nginx讓新的容器能夠對外提供服務。
 
-// 觸發時機，可以用push merge等等來設定這個action的觸發時間
-on:  
-  push:
-    branches:
-      - develop
+## 後記
+後續轉到後端組之後，也有看過後端組別的CICD，因為服務的特殊性，有一些服務正在運行的排程是不能直接進行中斷的，所以在部署前會先檢查目前是否有正在運行的排程，若有則會等到排程結束後再進行部署，這也是一個很好的做法，能夠確保服務的穩定性。
+或者是前端時間也有看到前端在CI流程中加入lighthouse的判斷，用來檢測每次網站部署上去之後，有沒有做了什麼影響SEO效能的操作，這也是一個很好的方式
 
-// 這邊的permission是因為我們晚點要透過OpenID Connect（簡稱 OIDC）進行驗證，拿取短期的金鑰驗證來做這次的action
-permissions:
-  id-token: write # This is required for requesting the JWT
-  contents: read # This is required for actions/checkout
-
-// 一些環境變數的設定
-env:
-  AWS_ECR_REPO: www-nuxt3
-  IMAGE_NAME: www-nuxt3
-  IMAGE_TAG: develop
-  NODE_VERSION: 20
-  PNPM_VERSION: latest-8
-  BASE_IMAGE: gcr.io/distroless/nodejs18-debian12:latest
-
-jobs:
-// 這個工作批次的名字，可用need: [check]來做工作批次的順序
-  check:
-    name: ESLint and Prettier check
-    runs-on: ubuntu-latest
-
-    steps:
-    // 允許這次的action來抓取我們repo的程式碼 並依照下面的程序來進行
-      - name: Clone repository
-        uses: actions/checkout@v4
-
-
-    // 裡面是透過我外部的另外一個job來拿取指定的pnpm跟node版本
-      - name: Setup Node and Pnpm with cache
-        uses: ./.github/actions/setup-and-cache
-        id: setup-and-cache
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          pnpm-version: ${{ env.PNPM_VERSION }}
-    //  安裝依賴項
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-    //  裡面是透過我外部的另外一個job來驗證這次push的程式碼是否有符合eslint規定
-      - name: ESLint check
-        run: pnpm lint || true
-
-  build:
-    // 跑在ubuntu的主機上
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        name: Clone repository
-
-      - name: Setup Node and Pnpm with cache
-        uses: ./.github/actions/setup-and-cache
-        id: setup-and-cache
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          pnpm-version: ${{ env.PNPM_VERSION }}
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-        
-        // 允許action能夠讀取同一個organization外部repo
-      - name: add dev env
-        uses: actions/checkout@v4
-        with: 
-          token: ${{ secrets.REPO_READ_TOKEN }}
-          repository: lejutech/develop_env
-          sparse-checkout: |
-            www-nuxt3/.env
-          sparse-checkout-cone-mode: false
-          path: './develop_env'
-        // 把外部的develop_env repo中的www-nuxt3資料夾中的 .env複製過來
-      - run: mv develop_env/www-nuxt3/.env .
-        //build檔案
-      - name: Build
-        run: pnpm build
-        //將剛剛build的檔案與image包成container
-      - name: Build container image
-        id: build
-        run: |
-          CONTAINER_ID=$(buildah from docker.io/arm64v8/node:18.19.0-alpine)
-          buildah copy ${CONTAINER_ID} .output /app
-          buildah config -e NODE_ENV=development -e HOST=0.0.0.0 ${CONTAINER_ID}
-          buildah config --cmd '["node", "/app/server/index.mjs"]' ${CONTAINER_ID}
-          IMAGE_ID=$(buildah commit ${CONTAINER_ID})
-          echo "IMAGE_ID=${IMAGE_ID}" >> $GITHUB_OUTPUT
-  
-
-        //這邊需要拿從AWS上註冊的Provider，並新增權限後所拿取到的token ID，拿取到的短期token
-      - name: Configure AWS credentials
-        id: aws-creds
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_IAM_ROLE }}
-          aws-region: ${{ secrets.AWS_REGION }}
-
-        //登入ECR並確保可以具備推送權限
-      - name: Login to ECR using Buildah
-        run: |
-          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | buildah login --username AWS --password-stdin ${{ secrets.AWS_ECR_URL }}
-        //把剛剛的container推送上ECS
-      - name: Upload Image
-        run: |
-          buildah push --rm ${{ steps.build.outputs.IMAGE_ID }} docker://${{ secrets.AWS_ECR_URL }}/${{ env.AWS_ECR_REPO }}:${{ env.IMAGE_TAG }}
-  
-
-  Deploy_to_develop_www-nuxt_from_ecr:
-    needs: [ build ]
-    //這邊需要連線自架主機，建立連線後才可以透過github action 的self-host runner觸發機器內部的腳本
-    runs-on: [self-hosted, dev-www-nuxt3-docker-site, ARM64]
-    steps:
-      - name: Deploy shell script
-        run: |
-          echo "www-nuxt3 開始部署"
-          //觸發部署腳本
-          sudo AWS_ECR_URL=${{ secrets.AWS_ECR_URL }} /home/ec2-user/scripts/apps/www-nuxt3_9007_9008/deploy_from_ecr.sh
-          echo "www-nuxt3 完成部署"
-```
-
-## 執行心得
-這次執行算是我在樂居做過目前最有趣的一件事情，一方面對虛擬機的運作還有AWS的服務有更多的認識外，算是解決了團隊中部署費時又費力的問題，尤其現在上線DL在即，團隊每天卻至少花費4次的部署時間在確定東西有沒有正確部署，所以這次的的執行真的是幫了團隊的大忙。
-也算是自發性提的一個需求 最後自己幫團隊省了一段 每天都會花不少時間確定的流程 心裡還是蠻有成就感的！
 
 <h3>閱讀連結</h3>
 <p>[IAM 使用者](https://docs.aws.amazon.com/zh_tw/IAM/latest/UserGuide/id_credentials_access-keys.html)</p>
