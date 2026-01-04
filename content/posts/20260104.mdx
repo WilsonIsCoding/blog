@@ -1,0 +1,100 @@
+---
+title: SOLID原則
+description: SOLID原則介紹
+slug: solid-principles
+date: 2026-01-04
+type: Post
+---
+
+## 前言
+<p>這一陣子再重新啃物件導向程式設計的書，裡面提到OOP的五大原則，SOLID原則，是目前最常見的OOP原則，也是我們在寫程式時最常遵循的原則。</p>
+<p>畢竟之前從前端轉來，剛開始寫感觸也不是太深，剛好趁這個機會再重新整理一下，也順便結合自己在工作時的經驗。</p>
+
+## SOLID原則
+<p>SOLID原則是OOP的五大原則，分別是：</p>
+<ul>
+    <li>Single Responsibility Principle(單一職責原則)</li>
+    <li>Open/Closed Principle(開閉原則)</li>
+    <li>Liskov Substitution Principle(里氏替換原則)</li>
+    <li>Interface Segregation Principle(介面隔離原則)</li>
+    <li>Dependency Inversion Principle(依賴反轉原則)</li>
+</ul>
+
+### 單一職責原則（Single Responsibility Principle，SRP）
+<p>一個類別只應該有一個職責，如果一個類別承擔了多個職責，那麼這個類別就會變得複雜，難以維護，難以擴展。</p>
+<p>舉個例子，如果一個類別既負責數據的存儲，又負責數據的匯出，那麼這個類別就違反了單一職責原則。</p>
+<p>這個類別應該被拆分成兩個類別，一個負責數據的存儲，一個負責數據的處理。</p>
+<p>這樣的話，如果需要修改數據的存儲方式，只需要修改負責數據的存儲的類別，而不需要修改負責數據的處理的類別。</p>
+<p>這樣的話，如果需要修改數據的處理方式，只需要修改負責數據的處理的類別，而不需要修改負責數據的存儲的類別。</p>
+<p>在實務上，Controller層應該只負責處理請求，而Service層應該只負責業務邏輯，Repository層應該只負責數據的存儲。</p>
+<p>而不同的service應該是負責處理不同的邏輯 ex 商業跟程式，而這個職責的劃分，則會依照工程團隊的共識進行劃分</p>
+<p>如果是複雜的邏輯，那應該就要保留可擴充性，讓service維度更小，但職責清楚，雖然一定程度上會增加開發的時間，但卻會讓之後的開發跟擴充更容易</p>
+
+## 開放封閉原則（Open-Closed Principle，OCP）
+<p>一個類別應該對擴展開放，對修改關閉。</p>
+<p>簡單來說，就是如果要加新功能，盡量不要修改已有的程式碼，而是要新增新的程式碼。</p>
+<p>而這個新增，可能是新增類別，可能是增加處理，但不會影響到已有的程式碼。</p>
+<p>而是在原有的傳入參數，或是回傳值，進行調整，這樣可以保證已有的程式碼不會被影響，而且可以保證新功能可以順利完成。</p>
+<p>舉例來說，支付功能，如果需要新增一種支付方式，那麼可以新增一個支付方式的類別，然後在支付功能中，新增一種支付方式的處理。</p>
+<p>而不是需要用if else或是switch來判斷，這樣的話，如果需要新增更多的支付方式，那麼就需要修改已有的程式碼，這樣就違反了開閉原則。</p>
+
+## 里氏替換原則（Liskov Substitution Principle，LSP）
+<p>子類別不能違反父類別的規則。</p>
+<p>先看code example</p>
+```python
+class Rectangle:
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+
+    def set_width(self, width):
+        self.width = width
+
+    def set_height(self, height):
+        self.height = height
+
+    def area(self):
+        return self.width * self.height
+
+class Square(Rectangle):
+    def __init__(self, size):
+        self.width = size
+        self.height = size
+
+    def set_width(self, width):
+        self.width = width
+        self.height = width
+
+    def set_height(self, height):
+        self.width = height
+        self.height = height
+
+square = Square(5)
+square.set_width(10)
+square.set_height(5)
+print(square.area())
+```
+<p>這個例子中，Square是Rectangle的子類別，但是父層設定的彈性應該是要讓子類別可以自由調整寬高，而不是只能調整一邊。</p>
+<p>而square的set_width和set_height方法，違反了里氏替換原則，因為它只能調整一邊，而不是兩邊。</p>
+<p>這就違反了里氏替換原則，因為子類別不能違反父類別的規則。</p>
+<p>因為父層規則的彈性，卻在子類別中被限制住了，這樣就違反了里氏替換原則。</p>
+
+## 介面隔離原則（Interface Segregation Principle，ISP）
+<p>這個原則我自己喜歡叫他最小知情權</p>
+<p>一個類別只應該需要知道他所需要知道的事情，而不需要知道過多或是或於複雜的資訊</p>
+<p>如果他知道的過多的話，不僅容易造成開發人員的困惑，也容易讓這個類別變成一個超級類別，什麼東西都要靠他</p>
+
+## 依賴反轉原則（Dependency Inversion Principle，DIP）
+<p>高階模組不應該依賴於低階模組，兩者都應該依賴於抽象。</p>
+<p>其實蠻容易的，就是請求呼叫的順序，應該是CONTROLLER -> SERVICE -> REPOSITORY -> ENTITY</p>
+<p>只能上叫下，不可以下叫上</p>
+
+## 總結
+<p>我這邊目前想到這五個原則分別想要避免的情況如下</p>
+<ul>
+    <li>SRP: 避免類別承擔過多的職責，避免類別變成超級類別<</li>
+    <li>OCP: 避免修改已有的程式碼，容易在重構期間造成錯誤</li>
+    <li>LSP: 避免子類別違反父類別的規則，避免命名混淆跟邏輯混肴</li>
+    <li>ISP: 避免類別知道過多的資訊，避免類別變成超級類別</li>
+    <li>DIP: 避免高階模組依賴於低階模組，避免請求呼叫的順序錯誤</li>
+</ul>
