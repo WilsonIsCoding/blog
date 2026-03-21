@@ -49,7 +49,7 @@ const MobileNav = () => {
       </button>
 
       <div
-        className={`fixed top-16 right-0 h-screen w-full bg-gray-200/90 transition-all duration-300 ease-in-out dark:bg-gray-800/90 ${
+        className={`fixed top-16 right-0 h-screen w-full bg-white/95 backdrop-blur-lg transition-all duration-300 ease-in-out dark:bg-gray-950/95 ${
           navShow ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
@@ -58,7 +58,7 @@ const MobileNav = () => {
             <CustomLink
               href={link.href}
               key={link.title}
-              className="block px-12 py-4 text-2xl font-bold tracking-widest text-gray-900 transition-colors hover:bg-gray-300 dark:text-gray-100 dark:hover:bg-gray-700"
+              className="block px-12 py-4 text-2xl font-bold tracking-widest text-gray-900 transition-colors hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-800"
               onClick={onToggleNav}
             >
               {link.title}

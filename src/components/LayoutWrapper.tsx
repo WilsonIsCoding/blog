@@ -8,7 +8,7 @@ type Props = {
 
 const LayoutWrapper = ({ children }: Props) => {
   return (
-    <div className="flex min-h-screen w-full flex-col justify-between">
+    <div className="flex min-h-screen w-full flex-col justify-between bg-gray-50 transition-colors duration-300 dark:bg-gray-950">
       <div>
         <Header />
 

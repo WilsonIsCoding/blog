@@ -33,21 +33,23 @@ const SocialIcon = ({ kind, href }: Props) => {
 
   return (
     <a
-      className="text-sm text-gray-500 transition-colors hover:text-gray-600"
+      className="group/icon inline-flex items-center justify-center rounded-lg p-2 text-sm transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800"
       target="_blank"
       rel="noopener noreferrer"
       href={href}
     >
-      <span className="sr-only bg-black hover:text-primary">{kind}</span>
+      <span className="sr-only">{kind}</span>
       <SocialSvg
         className={clsx(
-          'size-6 fill-current text-gray-700 transition-colors dark:text-gray-200',
-          kind === 'mail' && 'hover:text-primary dark:hover:text-primary-400',
-          kind === 'github' && 'hover:text-gray-500 dark:hover:text-gray-400',
+          'size-5 fill-current text-gray-500 transition-colors duration-200 dark:text-gray-400',
+          kind === 'mail' &&
+            'group-hover/icon:text-primary-500 dark:group-hover/icon:text-primary-400',
+          kind === 'github' &&
+            'group-hover/icon:text-gray-900 dark:group-hover/icon:text-gray-100',
           kind === 'facebook' &&
-            'hover:text-[#4267B2] dark:hover:text-[#4267B2]',
+            'group-hover/icon:text-[#4267B2] dark:group-hover/icon:text-[#4267B2]',
           kind === 'linkedin' &&
-            'hover:text-[#0e76a8] dark:hover:text-[#0e76a8]'
+            'group-hover/icon:text-[#0e76a8] dark:group-hover/icon:text-[#0e76a8]'
         )}
       />
     </a>

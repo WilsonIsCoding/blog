@@ -1,3 +1,45 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-gray-50 text-gray-900 transition-colors duration-300 dark:bg-gray-950 dark:text-gray-100;
+  }
+
+  ::selection {
+    @apply bg-primary-500/20 text-primary-900 dark:bg-primary-400/20 dark:text-primary-100;
+  }
+}
+
+@layer components {
+  .hero-gradient {
+    @apply relative overflow-hidden;
+  }
+
+  .hero-gradient::before {
+    content: '';
+    @apply absolute -top-24 -right-24 h-96 w-96 rounded-full opacity-[0.07] blur-3xl;
+    background: radial-gradient(circle, theme('colors.primary.500'), transparent 70%);
+  }
+
+  .hero-gradient::after {
+    content: '';
+    @apply absolute -bottom-32 -left-32 h-80 w-80 rounded-full opacity-[0.05] blur-3xl;
+    background: radial-gradient(circle, theme('colors.primary.400'), transparent 70%);
+  }
+
+  :is(.dark) .hero-gradient::before {
+    @apply opacity-[0.12];
+  }
+
+  :is(.dark) .hero-gradient::after {
+    @apply opacity-[0.08];
+  }
+}
